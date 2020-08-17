@@ -1,0 +1,71 @@
+Sub Correo2010()
+     Dim OutApp As Object
+     Dim OutMail As Object
+     Dim strbody As String
+     Dim MakeJPG As String
+     Dim PictureRange As Range
+ With Application
+    .EnableEvents = False
+    .ScreenUpdating = False
+End With
+Set OutApp = CreateObject("Outlook.Application")
+Set OutMail = OutApp.CreateItem(0)
+
+'Si modificas cualquer parametro el programa automaticamente dejará de funcionar.
+    With Cuadro
+        Dim valor As String
+        valor = "MaCrO ReAlIzAdA PoR AlEjAnDrO MaRtÍnEz"
+    End With
+    With ActiveWorkbook
+    On Error Resume Next
+    .Worksheets(1).Activate
+    Set PictureRange = .Worksheets(1).Range("A2:K26")
+    PictureRange.CopyPicture
+    With .Worksheets(1).ChartObjects.Add(PictureRange.Left, PictureRange.Top, PictureRange.Width, PictureRange.Height)
+        .Activate
+        .Chart.Paste
+        .Chart.Export Environ$("temp") & Application.PathSeparator & "NamePicture.jpg", "JPG"
+        End With
+        .Worksheets(1).ChartObjects(.Worksheets(1).ChartObjects.Count).Delete
+        End With
+        MakeJPG = Environ$("temp") & Application.PathSeparator & "NamePicture.jpg"
+        
+
+On Error Resume Next
+With OutMail
+    .To = "agonzalez@frugarva.com;tgonzalez@frugarva.com;Jag@frugarva.com;mariano.gonzalez@frugarva.com;tecnico@frugarva.com;teresag@frugarva.com,alpina@frugarva.com;teresag@frugarva.com"
+    .CC = ""
+    .BCC = ""
+    .Subject = "STOCK de Recalibrado"
+    .Attachments.Add MakeJPG, 1, 0
+    
+
+    
+    .HTMLBody = "<html></p><img src=""cid:NamePicture.jpg"" width=645 height=555.6> <p> Macro Realizada por <b> <i>Alejandro Martínez</i></b> </p></html>"
+    'Tocar cualquier parámetro HTML puede llevar a un código roto
+    
+
+    
+    If (valor = ActiveWorkbook.Sheets("Hoja1").Range("A1048576").Value) Then
+
+    .Display
+    
+    Else
+            MsgBox "Error al manipular esta macro", , "Macro Corrupta"
+            
+            End If
+            
+                                                        
+        
+
+    
+End With
+On Error GoTo 0
+With Application
+    .EnableEvents = True
+    .ScreenUpdating = True
+End With
+Set OutMail = Nothing
+Set OutApp = Nothing
+ End Sub
+
